@@ -5,8 +5,8 @@ import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { taskFilterableFields } from './task.constant';
-import { TaskService } from './task.service';
 import { ITask } from './task.interface';
+import { TaskService } from './task.service';
 
 const create = catchAsync(async (req: Request, res: Response) => {
   // get user email from request object
@@ -69,9 +69,21 @@ const update = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteById = catchAsync(async (req: Request, res: Response) => {
+  const result = await TaskService.deleteById(req.params.id, req.user?.email);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Task deleted successfully',
+    data: result,
+  });
+});
+
 export const TaskController = {
   create,
   getAll,
   getById,
   update,
+  deleteById,
 };
