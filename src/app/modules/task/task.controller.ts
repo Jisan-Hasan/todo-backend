@@ -54,8 +54,24 @@ const getById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const update = catchAsync(async (req: Request, res: Response) => {
+  const result = await TaskService.update(
+    req.params.id,
+    req.user?.email,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Task updated successfully',
+    data: result,
+  });
+});
+
 export const TaskController = {
   create,
   getAll,
   getById,
+  update,
 };
