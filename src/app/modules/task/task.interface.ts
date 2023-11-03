@@ -9,3 +9,8 @@ export type ITask = {
 };
 
 export type TaskModel = Model<ITask, Record<string, unknown>>;
+
+export type ITaskFilterRequest = {
+  searchTerm?: string;
+  status?: taskStatus;
+};
