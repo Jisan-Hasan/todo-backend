@@ -1,4 +1,6 @@
+import httpStatus from 'http-status';
 import { SortOrder } from 'mongoose';
+import ApiError from '../../../errors/ApiError';
 import { PaginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
@@ -80,7 +82,27 @@ const getAll = async (
   };
 };
 
+const getById = async (id: string, email: string): Promise<ITask> => {
+  const result = await Task.findById(id);
+
+  // check if task exists
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
+  }
+
+  // check if user is authorized to access this task
+  if (result.userEmail !== email) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'You are not authorized to access this task',
+    );
+  }
+
+  return result;
+};
+
 export const TaskService = {
   create,
   getAll,
+  getById,
 };

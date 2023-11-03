@@ -15,4 +15,6 @@ router.post(
 
 router.get('/', auth, TaskController.getAll);
 
+router.get('/:id', auth, TaskController.getById);
+
 export const TaskRoutes = router;

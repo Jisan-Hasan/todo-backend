@@ -6,6 +6,7 @@ import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { taskFilterableFields } from './task.constant';
 import { TaskService } from './task.service';
+import { ITask } from './task.interface';
 
 const create = catchAsync(async (req: Request, res: Response) => {
   // get user email from request object
@@ -33,10 +34,22 @@ const getAll = catchAsync(async (req: Request, res: Response) => {
 
   const result = await TaskService.getAll(email, filters, options);
 
-  sendResponse(res, {
+  sendResponse<ITask[]>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Tasks fetched successfully',
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+const getById = catchAsync(async (req: Request, res: Response) => {
+  const result = await TaskService.getById(req.params.id, req.user?.email);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Task fetched successfully',
     data: result,
   });
 });
@@ -44,4 +57,5 @@ const getAll = catchAsync(async (req: Request, res: Response) => {
 export const TaskController = {
   create,
   getAll,
+  getById,
 };
