@@ -1,14 +1,23 @@
 import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
+import { Secret } from 'jsonwebtoken';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
+import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import { IUser } from '../user/user.interface';
 import { User } from '../user/user.model';
 import { ISigninUser } from './auth.interface';
-import { jwtHelpers } from '../../../helpers/jwtHelpers';
-import { Secret } from 'jsonwebtoken';
 
 const signup = async (payload: IUser) => {
+  // check if user already exists with this email
+  const user = await User.findOne({ email: payload.email });
+  if (user) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      'User already exists with this email',
+    );
+  }
+
   // hash user password
   payload.password = await bcrypt.hash(
     payload.password,
